@@ -24,6 +24,8 @@ fn run(args: &Args) -> Result<(), Box<dyn Error>> {
     // TODO: improve errors
     let font = FontRef::try_from_slice(FONT_DATA)?;
     Converter::load_image(&args.input_file)?
+        .auto_downsample()?
+        .grayscale()?
         .to_ascii(&font)?
         .save(&args.output_file)
 }
