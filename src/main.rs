@@ -13,6 +13,9 @@ struct Args {
 
     #[arg(short = 'o')]
     output_file: String,
+
+    #[arg(short, long, default_value_t = 250)]
+    char_width: u32,
 }
 
 fn main() {
@@ -24,7 +27,7 @@ fn run(args: &Args) -> Result<(), Box<dyn Error>> {
     // TODO: improve errors
     let font = FontRef::try_from_slice(FONT_DATA)?;
     Converter::load_image(&args.input_file)?
-        .auto_downsample()?
+        .downsample(args.char_width)?
         .grayscale()?
         .to_ascii(&font)?
         .save(&args.output_file)
