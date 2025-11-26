@@ -16,8 +16,8 @@ impl Converter {
         Ok(Converter { image })
     }
 
-    pub fn downsample(&mut self, char_width: u32) -> Result<&mut Self, Box<dyn Error>> {
-        let block_width = self.image.width() / char_width;
+    pub fn downsample(&mut self, ascii_cols: u32) -> &mut Self {
+        let block_width = self.image.width() / ascii_cols;
         let block_heigh = block_width * 2;
 
         let new_width = self.image.width() / block_width;
@@ -26,12 +26,12 @@ impl Converter {
         self.image = self
             .image
             .resize(new_width, new_height, FilterType::Lanczos3);
-        Ok(self)
+        self
     }
 
-    pub fn grayscale(&mut self) -> Result<&mut Self, Box<dyn Error>> {
+    pub fn grayscale(&mut self) -> &mut Self {
         self.image = self.image.grayscale();
-        Ok(self)
+        self
     }
 
     pub fn to_ascii(&mut self, font: &FontRef<'static>) -> Result<&mut Self, Box<dyn Error>> {
@@ -66,7 +66,7 @@ impl Converter {
             let pixel_x = (x * glyph_metadata.width) as i32;
             let pixel_y = (y * glyph_metadata.height) as i32;
 
-            // adapted liniar interpolation formula
+            // adapted linear interpolation formula
             // the value here (pixel) is mapped from 0..255 range into an index in symbols array.
             let char_index = (symbols.len() - 1) * (pixel[0] as usize) / 255;
 
@@ -94,7 +94,7 @@ impl Converter {
 
         let outlined = font
             .outline_glyph(glyph)
-            .ok_or_else(|| Box::<dyn Error>::from("Outline missing"))?;
+            .ok_or_else(|| Box::<dyn Error>::from("Cannot compute glyph outline :("))?;
 
         let bounds = outlined.px_bounds();
         Ok(GlyphMetadata {

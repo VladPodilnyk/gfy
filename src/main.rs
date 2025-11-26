@@ -14,8 +14,9 @@ struct Args {
     #[arg(short = 'o')]
     output_file: String,
 
+    /// Determines how many ascii chars is in one row
     #[arg(short, long, default_value_t = 250)]
-    char_width: u32,
+    ascii_cols: u32,
 }
 
 fn main() {
@@ -24,11 +25,10 @@ fn main() {
 }
 
 fn run(args: &Args) -> Result<(), Box<dyn Error>> {
-    // TODO: improve errors
     let font = FontRef::try_from_slice(FONT_DATA)?;
     Converter::load_image(&args.input_file)?
-        .downsample(args.char_width)?
-        .grayscale()?
+        .downsample(args.ascii_cols)
+        .grayscale()
         .to_ascii(&font)?
         .save(&args.output_file)
 }
