@@ -1,7 +1,9 @@
 name: Release gfy cli
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   build-and-release:
